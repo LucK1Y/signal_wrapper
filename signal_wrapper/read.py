@@ -1,43 +1,46 @@
-from .config import SERVER_ADRESS,READ_COMMAND
+from .config import READ_COMMAND
 from .models import Message
 
-import subprocess,json
+import subprocess, json
 
-def read():
+
+def read(serveraddress: str):
     """Reads all new messages and parses them
     
     Returns:
         List[Messages] -- List of Messages
     """
-    print(READ_COMMAND.format(SERVER_ADRESS))
-    process=subprocess.run(READ_COMMAND.format(SERVER_ADRESS),capture_output=True,shell=True)
+    print(READ_COMMAND.format(serveraddress))
+    process = subprocess.run(READ_COMMAND.format(serveraddress), capture_output=True, shell=True)
 
     #  stdout=PIPE and/or stderr=PIPE
     if process.stderr:
-        print(f"[-] ERROR in checking {READ_COMMAND.format(SERVER_ADRESS)}")
+        print(f"[-] ERROR in checking {READ_COMMAND.format(serveraddress)}")
         return
 
-    string=process.stdout.decode()
-    
-    msgs=[]
+    string = process.stdout.decode()
+
+    msgs = []
 
     for line in string.split("\n"):
         msgs.append(Message.parse(line))
 
     return msgs
 
-def myconverter(o):
-    type(o)
-    if isinstance(o,list):
-        return o
-    print(o.__dict__)
-    return o.__dict__
 
-def read_Raw():
-    out=[]
+# def myconverter(o):
+#     type(o)
+#     if isinstance(o, list):
+#         return o
+#     print(o.__dict__)
+#     return o.__dict__
 
-    for msg in read():
-        if isinstance(msg,Message):
+
+def read_Raw(serveraddress: str):
+    out = []
+
+    for msg in read(serveraddress):
+        if isinstance(msg, Message):
             out.append(msg.__dict__)
 
     return out
