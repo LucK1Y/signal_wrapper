@@ -1,6 +1,6 @@
-from signal_wrapper.models import Message
-from signal_wrapper import read
-from signal_wrapper.send import send_Thread
+from .signal_wrapper.models import Message
+from .signal_wrapper import read
+from .signal_wrapper.send import send_Thread
 
 from threading import Thread
 from typing import Union, Iterable
@@ -11,10 +11,11 @@ class PySiWrapper(object):
         self.address = serveraddress
         self.task = None
 
-    def send(self, msg: Message) -> Thread:
+    def send(self, msg: Message) -> Union[Thread, None]:
         if self.task:
             if self.task.is_alive():
                 print("[-] already sending one message, ABORTING")
+                return None
 
         self.task = send_Thread(msg)
         return self.task
